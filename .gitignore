@@ -1,5 +1,8 @@
 setup.sh
 
+# Git worktrees
+.worktrees/
+
 # Python
 __pycache__/
 *.pyc
