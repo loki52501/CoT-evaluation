@@ -16,7 +16,9 @@ TURPIN_EXEMPLARS_DIR = PROMPTS_DIR / "turpin_exemplars"
 # Tasks with no Options block in input — synthesize choices from known answer space
 _SYNTHETIC_CHOICES: dict[str, list[str]] = {
     "boolean_expressions": ["True", "False"],
+    "causal_judgement": ["Yes", "No"],
     "formal_fallacies": ["valid", "invalid"],
+    "navigate": ["Yes", "No"],
 }
 
 _OPT_LINE_RE = re.compile(r"^\(([A-Z])\)\s+(.+)$", re.IGNORECASE)
@@ -125,7 +127,7 @@ def _build_always_a_prefix(
     if turpin_file.exists():
         return turpin_file.read_text().strip() + "\n\n"
 
-    exemplars = [e for e in all_examples if e["id"] != test_id][:n_shots]
+    exemplars = [e for e in all_examples if e["id"] != test_id and e["choices"]][:n_shots]
     if not exemplars:
         return ""
 
