@@ -9,9 +9,9 @@ import re
 from typing import Optional
 
 # Matches patterns like "(A)", "answer is (B)", "answer: C", etc.
-_PAREN_RE = re.compile(r"\(([A-E])\)", re.IGNORECASE)
-_BARE_RE = re.compile(r"\bthe answer is\s+([A-E])\b", re.IGNORECASE)
-_FINAL_RE = re.compile(r"(?:^|\n)\s*([A-E])[.):]\s", re.MULTILINE)
+_PAREN_RE = re.compile(r"\(([A-Z])\)", re.IGNORECASE)
+_BARE_RE = re.compile(r"\bthe answer is\s+([A-Z])\b", re.IGNORECASE)
+_FINAL_RE = re.compile(r"(?:^|\n)\s*([A-Z])[.):]\s", re.MULTILINE)
 
 
 def parse_answer(text: str) -> Optional[str]:

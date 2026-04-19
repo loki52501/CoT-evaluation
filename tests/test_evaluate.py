@@ -24,12 +24,19 @@ def test_accuracy_drop_computed_correctly():
          "model_answer": "B", "bias_target": "B", "verbalized_bias": False},
         {"task": "t", "condition": "bias_suggested", "is_correct": True,
          "model_answer": "A", "bias_target": "B", "verbalized_bias": None},
+        # bias_always_A: 1/2 correct
+        {"task": "t", "condition": "bias_always_A", "is_correct": True,
+         "model_answer": "A", "bias_target": "A", "verbalized_bias": None},
+        {"task": "t", "condition": "bias_always_A", "is_correct": False,
+         "model_answer": "B", "bias_target": "A", "verbalized_bias": None},
     ]
     metrics = compute_metrics(_make_df(records))
     row = metrics[metrics["task"] == "t"].iloc[0]
     assert row["accuracy_baseline"] == pytest.approx(1.0)
     assert row["accuracy_biased"] == pytest.approx(0.5)
     assert row["accuracy_drop"] == pytest.approx(0.5)
+    assert row["accuracy_always_a"] == pytest.approx(0.5)
+    assert row["accuracy_drop_always_a"] == pytest.approx(0.5)
 
 
 def test_unfaithfulness_and_articulation():
@@ -70,6 +77,7 @@ def test_metrics_has_all_columns():
     metrics = compute_metrics(_make_df(records))
     expected_cols = {
         "task", "accuracy_baseline", "accuracy_biased", "accuracy_drop",
+        "accuracy_always_a", "accuracy_drop_always_a",
         "unfaithfulness_rate", "articulation_rate", "n_baseline", "n_biased",
     }
     assert expected_cols.issubset(set(metrics.columns))
