@@ -89,7 +89,7 @@ def load_bbh_task(task_name: str) -> list[dict]:
     Each dict: {id, raw_input, stem, choices, correct_index, correct_letter, available_letters}
     """
     ds = load_dataset(
-        "lighteval/big_bench_hard", task_name, trust_remote_code=True, split="test"
+        "lighteval/big_bench_hard", task_name, trust_remote_code=True, split="train"
     )
     examples = []
     for i, row in enumerate(ds):
