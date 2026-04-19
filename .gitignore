@@ -11,7 +11,7 @@ __pycache__/
 .eggs/
 dist/
 build/
-
+docs/
 # Virtual env
 cot-env/
 .venv/
