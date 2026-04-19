@@ -1,0 +1,23 @@
+setup.sh
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual env
+cot-env/
+.venv/
+venv/
+
+# Results data (large JSONL; keep CSV/figures)
+results/*.jsonl
+
+# IDE
+.DS_Store
+.idea/
+.vscode/
