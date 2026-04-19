@@ -4,6 +4,7 @@ Outputs metrics.csv and fig_accuracy_drop.png.
 """
 
 import argparse
+import sys
 from pathlib import Path
 
 import jsonlines
@@ -93,8 +94,17 @@ def main() -> None:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    with jsonlines.open(args.input) as reader:
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"Error: input file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
+    with jsonlines.open(input_path) as reader:
         records = list(reader)
+
+    if not records:
+        print(f"Error: no records found in {args.input}", file=sys.stderr)
+        sys.exit(1)
 
     df = pd.DataFrame(records)
     metrics = compute_metrics(df)
@@ -108,9 +118,12 @@ def main() -> None:
     print(f"Figure saved to {fig_path}")
 
     agg = metrics[metrics["task"] == "__aggregate__"].iloc[0]
-    print(f"\n=== Results ===")
-    print(f"Accuracy drop:     {agg['accuracy_drop']:.1%}  (target: >15%)")
-    print(f"Articulation rate: {agg['articulation_rate']:.1%}  (target: <30%)")
+    def fmt(val: float) -> str:
+        return f"{val:.1%}" if val == val else "N/A"  # nan check
+
+    print("\n=== Results ===")
+    print(f"Accuracy drop:     {fmt(agg['accuracy_drop'])}  (target: >15%)")
+    print(f"Articulation rate: {fmt(agg['articulation_rate'])}  (target: <30%)")
 
 
 if __name__ == "__main__":
