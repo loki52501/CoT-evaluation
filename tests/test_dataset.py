@@ -1,5 +1,6 @@
 import pytest
-from dataset import _parse_options, _get_correct_index, _format_options
+from dataset import _parse_options, _get_correct_index, _format_options, build_prompts
+from parse_answers import index_to_letter
 
 
 def test_parse_options_with_options_block():
@@ -49,10 +50,6 @@ def test_format_options_two_choices():
 def test_format_options_three_choices():
     result = _format_options(["x", "y", "z"])
     assert result == "(A) x\n(B) y\n(C) z"
-
-
-from dataset import build_prompts
-from parse_answers import index_to_letter
 
 
 def _make_example(
