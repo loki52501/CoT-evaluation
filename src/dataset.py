@@ -19,8 +19,8 @@ _SYNTHETIC_CHOICES: dict[str, list[str]] = {
     "formal_fallacies": ["valid", "invalid"],
 }
 
-_OPT_LINE_RE = re.compile(r"^\(([A-F])\)\s+(.+)$", re.IGNORECASE)
-_LETTER_TARGET_RE = re.compile(r"^\(([A-F])\)$")
+_OPT_LINE_RE = re.compile(r"^\(([A-Z])\)\s+(.+)$", re.IGNORECASE)
+_LETTER_TARGET_RE = re.compile(r"^\(([A-Z])\)$")
 
 
 class PromptRecord(TypedDict):
@@ -61,7 +61,7 @@ def _parse_options(raw_input: str, task: str) -> tuple[str, list[str]]:
         return "\n".join(stem_lines).strip(), choices
 
     if task in _SYNTHETIC_CHOICES:
-        return raw_input.strip(), _SYNTHETIC_CHOICES[task]
+        return raw_input.strip(), list(_SYNTHETIC_CHOICES[task])
 
     return raw_input.strip(), []
 
