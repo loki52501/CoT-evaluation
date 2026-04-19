@@ -3,9 +3,6 @@ import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import jsonlines
-import pytest
-
 SRC = str(Path(__file__).parent.parent / "src")
 
 
@@ -55,7 +52,8 @@ def test_run_task_writes_three_records(tmp_path):
     mock_writer.write.side_effect = written.append
 
     with patch("run_inference.load_bbh_task", return_value=_one_example()):
-        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer)
+        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
+                 sampling_params=MagicMock(), judge_params=MagicMock())
 
     assert len(written) == 3
     assert {r["condition"] for r in written} == {
@@ -72,7 +70,8 @@ def test_run_task_verbalized_none_for_always_a(tmp_path):
     mock_writer.write.side_effect = written.append
 
     with patch("run_inference.load_bbh_task", return_value=_one_example()):
-        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer)
+        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
+                 sampling_params=MagicMock(), judge_params=MagicMock())
 
     always_a = next(r for r in written if r["condition"] == "bias_always_A")
     assert always_a["verbalized_bias"] is None
@@ -87,7 +86,8 @@ def test_run_task_record_has_required_fields(tmp_path):
     mock_writer.write.side_effect = written.append
 
     with patch("run_inference.load_bbh_task", return_value=_one_example()):
-        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer)
+        run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
+                 sampling_params=MagicMock(), judge_params=MagicMock())
 
     required = {
         "task", "id", "condition", "bias_target", "correct_letter",

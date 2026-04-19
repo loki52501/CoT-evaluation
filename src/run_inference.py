@@ -40,8 +40,8 @@ def run_task(
     limit: int | None,
     n_shots: int,
     writer,
-    sampling_params=None,
-    judge_params=None,
+    sampling_params,
+    judge_params,
 ) -> None:
     examples = load_bbh_task(task)
     prompt_records = build_prompts(task, examples, limit=limit, n_shots=n_shots)
