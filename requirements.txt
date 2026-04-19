@@ -1,0 +1,18 @@
+# Core inference
+vllm==0.6.3.post1
+transformers==4.44.2
+
+# Data
+datasets==2.21.0
+huggingface_hub==1.11.0
+
+# Evaluation & analysis
+pandas==2.2.2
+numpy==1.26.4
+matplotlib==3.8.4
+seaborn==0.13.2
+
+# Utilities
+tqdm==4.67.3
+jsonlines==4.0.0
+regex==2024.4.16
