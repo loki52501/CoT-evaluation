@@ -24,3 +24,6 @@ results/*.jsonl
 .DS_Store
 .idea/
 .vscode/
+.env
+
+.claude

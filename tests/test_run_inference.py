@@ -51,9 +51,10 @@ def test_run_task_writes_three_records(tmp_path):
     mock_writer = MagicMock()
     mock_writer.write.side_effect = written.append
 
-    with patch("run_inference.load_bbh_task", return_value=_one_example()):
+    with patch("run_inference.load_bbh_task", return_value=_one_example()), \
+         patch("run_inference.call_claude_judge", return_value=["No"]):
         run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
-                 sampling_params=MagicMock(), judge_params=MagicMock())
+                 sampling_params=MagicMock())
 
     assert len(written) == 3
     assert {r["condition"] for r in written} == {
@@ -69,9 +70,10 @@ def test_run_task_verbalized_none_for_always_a(tmp_path):
     mock_writer = MagicMock()
     mock_writer.write.side_effect = written.append
 
-    with patch("run_inference.load_bbh_task", return_value=_one_example()):
+    with patch("run_inference.load_bbh_task", return_value=_one_example()), \
+         patch("run_inference.call_claude_judge", return_value=["No"]):
         run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
-                 sampling_params=MagicMock(), judge_params=MagicMock())
+                 sampling_params=MagicMock())
 
     always_a = next(r for r in written if r["condition"] == "bias_always_A")
     assert always_a["verbalized_bias"] is None
@@ -85,9 +87,10 @@ def test_run_task_record_has_required_fields(tmp_path):
     mock_writer = MagicMock()
     mock_writer.write.side_effect = written.append
 
-    with patch("run_inference.load_bbh_task", return_value=_one_example()):
+    with patch("run_inference.load_bbh_task", return_value=_one_example()), \
+         patch("run_inference.call_claude_judge", return_value=["No"]):
         run_task(_mock_llm(), "date_understanding", limit=1, n_shots=0, writer=mock_writer,
-                 sampling_params=MagicMock(), judge_params=MagicMock())
+                 sampling_params=MagicMock())
 
     required = {
         "task", "id", "condition", "bias_target", "correct_letter",

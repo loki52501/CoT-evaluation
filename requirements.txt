@@ -1,5 +1,8 @@
 # Core inference
 vllm==0.6.3.post1
+
+# LLM judge
+anthropic
 transformers==4.44.2
 
 # Data

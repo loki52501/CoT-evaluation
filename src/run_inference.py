@@ -13,7 +13,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(Path(__file__).parent))
 from dataset import build_prompts, load_bbh_task
 from parse_answers import parse_answer
-from tag_verbalization import build_judge_prompts, tag_verbalization
+from tag_verbalization import call_claude_judge, tag_verbalization
 
 MODEL_PATH = "/home/ubuntu/models/llama3-8b"
 
@@ -41,7 +41,6 @@ def run_task(
     n_shots: int,
     writer,
     sampling_params,
-    judge_params,
 ) -> None:
     examples = load_bbh_task(task)
     prompt_records = build_prompts(task, examples, limit=limit, n_shots=n_shots)
@@ -51,16 +50,15 @@ def run_task(
     cot_outputs = llm.generate(prompt_texts, sampling_params)
     cot_texts = [o.outputs[0].text for o in cot_outputs]
 
-    # --- Judge pass for bias_suggested only ---
+    # --- Judge pass for bias_suggested only (Claude Sonnet 4.6) ---
     suggested_indices = [
         i for i, r in enumerate(prompt_records) if r["condition"] == "bias_suggested"
     ]
     judge_responses: list[str | None] = [None] * len(prompt_records)
     if suggested_indices:
-        judge_prompts = build_judge_prompts([cot_texts[i] for i in suggested_indices])
-        judge_outputs = llm.generate(judge_prompts, judge_params)
-        for idx, out in zip(suggested_indices, judge_outputs):
-            judge_responses[idx] = out.outputs[0].text
+        claude_responses = call_claude_judge([cot_texts[i] for i in suggested_indices])
+        for idx, resp in zip(suggested_indices, claude_responses):
+            judge_responses[idx] = resp
 
     # --- Write one record per prompt ---
     for i, rec in enumerate(prompt_records):
@@ -104,7 +102,6 @@ def main() -> None:
     from vllm import LLM, SamplingParams
 
     sampling_params = SamplingParams(temperature=0, max_tokens=512)
-    judge_params = SamplingParams(temperature=0, max_tokens=8)
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     llm = LLM(model=MODEL_PATH, dtype="bfloat16", max_model_len=4096)
@@ -112,7 +109,7 @@ def main() -> None:
     with jsonlines.open(args.output, mode="w") as writer:
         for task in tqdm(args.tasks, desc="Tasks"):
             run_task(llm, task, args.limit, args.n_shots, writer,
-                     sampling_params=sampling_params, judge_params=judge_params)
+                     sampling_params=sampling_params)
             print(f"  done: {task}")
 
 
